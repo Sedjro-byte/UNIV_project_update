@@ -18,7 +18,7 @@ task :
 import numpy as np  # module de math
 import matplotlib.pyplot as plt  # module graphique
 from scipy.constants import g    # constante en m/s^2.
-from Ballistic.model_1 import Model_1
+from model_1 import Model_1
 #from .import colored_messages as cm
 #from .import constantes as cs
 

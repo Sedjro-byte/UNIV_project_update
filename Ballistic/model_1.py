@@ -12,8 +12,8 @@ Partie 1: apprentissage sur le modèle analytique, Model_1
 import numpy as np  # module de math
 import matplotlib.pyplot as plt  # module graphique
 from scipy.constants import g    # constante en m/s^2.
-from .import colored_messages as cm
-from .import constantes as cs
+#from .import colored_messages as cm
+#from .import constantes as cs
 
 class Model_1(object):
     """ Class of the analytical model"""
@@ -29,8 +29,8 @@ class Model_1(object):
         self.t_1, self.h_1 = None, None
 
 
-    def initial_message():
-        set_title("Création d'une instance du modèle analytique (class initiation)")
+    #def initial_message():
+     #   set_title("Création d'une instance du modèle analytique (class initiation)")
 
     # SETTERS
 
