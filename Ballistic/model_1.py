@@ -12,8 +12,8 @@ Partie 1: apprentissage sur le modèle analytique, Model_1
 import numpy as np  # module de math
 import matplotlib.pyplot as plt  # module graphique
 from scipy.constants import g    # constante en m/s^2.
-from .import colored_messages as cm
-from .import constantes as cs
+#from .import colored_messages as cm
+#from .import constantes as cs
 
 class Model_1(object):
     """ Class of the analytical model"""
@@ -62,11 +62,51 @@ class Model_1(object):
         t_i = (var + np.sqrt(var ** 2 + 2 * g * self.h)) / g
         v_x, v_z, v = self.set_velocity(t_i)
         x_i = v_x * t_i  # ici des variables locales, pas de self devant
-        theta_i = np.rad2deg(np.arctan(v_z / v_z))
+        theta_i = np.rad2deg(np.arctan(v_z / v_x))
         self.impact_values = {"t_i": t_i, "p": x_i, "angle": theta_i, "v": [v_x, v_z, v]}
         return self.impact_values
 
-    # GETTERS
+##############################################################JE COMPLETE ICI########################################################### 
+    
+    def set_trajectory (self,t_end,npt ):    # t_end is a nombers and npt is number
+        self.time=np.linspace(0,t_end,npt)
+        self.x = self.v_0*np.cos(self.alpha)*self.time
+        self.z= -(g*0.5*(self.time)**2) + self.v_0 * self.time*np.sin(self.alpha) + self.h
+        self.v_x= self.v_0*np.cos(self.alpha)
+        self.v_z= self.v_0 * np.sin(self.alpha) - g*self.time
+        self.v= np.sqrt(self.v_x**2 + self.v_z**2)
+
+#_________________________________________________________________________________________________
+
+
+    def set_trajectories(self,alphas):
+        list_x , list_z , list_v_x , list_v_z , list_v = [], [], [], [], []
+
+        for alpha in alphas:
+            self.alpha = np.deg2rad(alpha)
+            impact_values = self.set_impact_values()
+            self.set_trajectory(impact_values["t_i"], 50)
+            list_x.append(self.x)
+            list_z.append(self.z)
+            list_v_x.append(self.v_x)
+            list_v_z.append(self.v_z )
+            list_v.append(self.v)
+
+        return [list_x , list_z, list_v_x, list_v_z, list_v]
+    
+##############################################################    FIN    ########################################################### 
+  
+  
+  
+  
+  
+  
+  
+  
+    # GETTERS################################################################################################################################
+    ########################################################################################################################################
+
+
     def get_impact_values(self):
         """
         Joli affichage pour les valeurs d'impact
@@ -77,6 +117,9 @@ class Model_1(object):
         print("angle      : %.2f °" % self.impact_values["angle"])
         print("|v|        : %.2f m/s" % self.impact_values["v"][2])
 
+#_________________________________________________________________________________________________
+
+
     def get_parameters(self):
         """
         Affichage formatté des paramètres
@@ -86,17 +129,16 @@ class Model_1(object):
         print("h          : %.2f m" % self.h)
         print("alpha      : %.2f °" % np.rad2deg(self.alpha))
 
+
+
 ##############################################################JE COMPLETE ICI###########################################################    
 
 
 
-    def set_trajectory (self,t_end,npt ):    # t_end is a nombers and npt is number
-        self.time=np.linspace(0,t_end,npt)
-        self.x = self.v_0*np.cos(self.alpha)*self.time
-        self.z= -(g*0.5*(self.time)**2) + self.v_0 * self.time*np.sin(self.alpha) + self.h
-        self.v_x= self.v_0*np.cos(self.alpha)
-        self.v_z= self.v_0 * np.sin(self.alpha) - g*self.time
-        self.v= np.sqrt(self.v_x**2 + self.v_z**2)
+
+
+# PLOTTING METHODS  #####################################################################################################################
+########################################################################################################################################
 
 
     def plot_trajectory(self):
@@ -105,6 +147,7 @@ class Model_1(object):
         plt.ylabel("Position Z")
         plt.legend(["Position Z en fonction de la position z "], fontsize=12)
         plt.show ()
+#_________________________________________________________________________________________________
 
     def plot_component(self):
 
@@ -124,57 +167,77 @@ class Model_1(object):
         plt.tight_layout(rect=[0, 0, 1, 0.95])  # ajuste les marges
         plt.show()
 
+#_________________________________________________________________________________________________
 
-
-    def set_trajectories(self):
-
-        list_alpha=[]
-        list_x=[]
-        list_z=[]
-        list_v_x=[]
-        list_v_z=[]
-        list_v=[]
-        x=z=v_x=v_z=v=0
-
-        for i in range (20,71):
-            if i%5==0:
-                list_alpha.append(i)
-        list_alpha=np.deg2rad(list_alpha)
-
-        for i in list_alpha:
-            
-            x = self.v_0*np.cos(i)*self.time
-            z= -(g*0.5*(self.time)**2) + self.v_0 * self.time*np.sin(i) + self.h
-            v_x= self.v_0*np.cos(i)
-            v_z= self.v_0 * np.sin(i) - g*self.time
-            v= np.sqrt(self.v_x**2 + self.v_z**2)
-            list_x.append(x)
-            list_z.append(z)
-            list_v_x.append(v_x)
-            list_v_z.append(v_z)
-            list_v.append(v)
-
-        return [list_x , list_z, list_v_x, list_v_z, list_v]
-    
-    def plot_trajectories(self, liste):
+    def plot_trajectories(self, xliste, zliste,alphas):
          
         plt.figure(figsize=(10, 6)) # Crée une nouvelle figure
-        xliste= liste[0]
-        zliste= liste[1] 
-        for i in range(len(xliste)):
+
+        for i , alpha in enumerate(alphas):
             X=xliste[i]
             Z=zliste[i]
-            plt.plot(X, Z)
-
-        # --- Mise en forme finale du graphique ---
+            plt.plot(X, Z, label=f"α = {alpha}")
         plt.xlabel("Position X (m)")
         plt.ylabel("Position Z (m)")
-        plt.title("FIGURE 3 – Différentes trajectoires en fonction de α")
+        plt.title("FIGURE Différentes trajectoires en fonction de l'angle de lancement")
         plt.legend(title="Angle de lancement", loc='upper right')
         plt.grid(True, linestyle='--')
-        # plt.ylim(bottom=0) # Assure que l'axe Z commence à zéro
         plt.show()
 
+#_________________________________________________________________________________________________
+
+
+    def plot_maximum_distance(self, alphas):
+        """Trace la portée maximale en fonction de l'angle."""
+        distances = []
+        for alpha in alphas:
+            self.alpha = np.deg2rad(alpha)
+            impact_values = self.set_impact_values()
+            distances.append(impact_values["p"])
+        plt.figure(figsize=(10, 6))
+        plt.plot(alphas, distances)
+        plt.xlabel("Angle ")
+        plt.ylabel("Portée maximale (m)")
+        plt.title("Portée maximale en fonction de l'angle")
+        plt.grid(True, linestyle='--')
+        plt.show()
+
+#_________________________________________________________________________________________________
+
+
+    def find_optimal_angle(self, alphas):
+        """Trouve l'angle optimal pour la portée maximale."""
+        distances = []
+        for alpha in alphas:
+            self.alpha = np.deg2rad(alpha)
+            impact_values = self.set_impact_values()
+            distances.append(impact_values["p"])
+        optimal_index = np.argmax(distances)
+
+        return alphas[optimal_index], distances[optimal_index]
+
+#_________________________________________________________________________________________________
+
+
+    def plot_maximum_height(self, alphas):
+        """Trace l'altitude maximale en fonction de l'angle."""
+        heights = []
+        for alpha in alphas:
+            self.alpha = np.deg2rad(alpha)
+            t_1 = (self.v_0 * np.sin(self.alpha)) / g
+            h_1 = self.h + (self.v_0 * np.sin(self.alpha) * t_1) - (0.5 * g * t_1**2)
+            heights.append(h_1)
+        plt.figure(figsize=(10, 6))
+        plt.plot(alphas, heights)
+        plt.xlabel("Angle")
+        plt.ylabel("Altitude maximale (m)")
+        plt.title("Altitude maximale en fonction de l'angle")
+        plt.grid(True, linestyle='--')
+        plt.show()
+
+
+
+        
 
 
 
