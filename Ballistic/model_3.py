@@ -19,32 +19,53 @@ from scipy.integrate import odeint
 #from Ballistic.constantes import *
 
 
-class Model_2(object):
+class Model_3(object):
     def __init__(self, params):
         """ Le constructeur de classe est lancé dès la création de la classe"""
         self.h = params["h"]
         self.v_0 = params["v_0"]
         self.alpha = np.deg2rad(params["alpha"])
         self.npt = params["npt"]
+        #______________________________________________________ ADD BY ME
+        self.mass=params["mass"]
+        self.rho=params["rho"]
+        self.Cd= params["Cd"]
+        self.area= params["area"]
+        self.Cl= params["Cl"]
+        
+        #______________________________________________________ END
         #self.initial_message()
 
         self.t, self.x, self.z = None, None, None
         self.v_x, self.v_z, self.v = None, None, None
+        self.Cx, self.Cz = None, None
         self.impact_values = None
+        self.a=0.3
+    #_________________________________________________________________________________________________________________________+++++++++++++++++++++++++++++++++++++++probleme a corriger avec l angle teta +++++++++++++++++ semble corrige dernier minute
+        self.T0= self.a*self.mass * g
+        self.beta= (self.rho*self.area)/(2*self.mass)
+        self.Ct= self.T0 / self.mass
+    #_________________________________________________________ END
+        
 
     @staticmethod
     #def initial_message():
      #   set_title("Création d'une instance du modèle  ODE (exemple d'apprentissage)")
 
-    def ode( y,t):
+    def ode(self, y,t):
         #ODE to solve
         #dy/dt = f(t, y)
         #y = [self.x, self.z, self.v_x, self.v_z]
         dy = np.zeros(4)
         dy[0] = y[2]  # dx / dt = v_x
         dy[1] = y[3]  # dz / dt = v_z
-        dy[2] = 0     # dv_x / dt = 0
-        dy[3] = -g   # dv_z / dt = - g
+#________________________________________________________________________________________________________________________________________+++++++++++++++++++++++++++++++++++++++probleme a corriger avec l angle teta +++++++++++++++++ semble corrige
+        teta=np.arctan(y[3]/y[2])
+        self.Cx=-self.Cl*np.cos(np.deg2rad(teta))- self.Cl* np.sin(np.deg2rad(teta))
+        self.Cz= self.Cl*np.cos(np.deg2rad(teta))-self.Cd* np.sin(np.deg2rad(teta))
+        dy[2] = self.beta*(self.v)**2 * self.Cx +  self.Ct * np.cos(np.deg2rad(teta))    # dv_x / dt = 0
+        dy[3] = -g + self.beta * self.v **2 * self.Cz +  self.Ct * np.sin(np.deg2rad(teta))   # dv_z / dt = - g
+  
 
         return dy
 
@@ -179,6 +200,11 @@ class Model_2(object):
         print("v_0        : %.2f m/s" % self.v_0)
         print("h          : %.2f m" % self.h)
         print("alpha      : %.2f °" % np.rad2deg(self.alpha))
+        print("mass       : %.2f kg" % self.mass)
+        print("rho        : %.2f kg/m^3" % self.rho)
+        print("area       : %.2f m^2" % self.area)
+        print("Cd         : %2f "% self.Cd)
+        print("Cl         : %2f "% self.Cl)
 
     def get_impact_values(self):
         """

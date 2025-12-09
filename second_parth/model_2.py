@@ -78,12 +78,15 @@ class Model_2(object):
         plt.show ()
         #print("Récupérer la méthode de la partie 1 et la recopier")
 
+#_____________________________________________________________________________________________ LA VALIDATION AFFICE LA SOLUTION ANALYTIQUE ET LA SOLUTION NUMERIQUE, AFFICHE L ERREU PUIS TRACE LA COURBE ANALYTIQUE SUPPERSPOSE AVEC LA COURBE  NUMERIQUE 
     def validation(self,t_end,npt):
         """
         on se contente de calculer l'erreur sur la position du dernier point.
         ajout des étudiants
         """
         #set_msg("Validation")
+
+        #______________________________________________________________________________________________________________________________________ AFFICE LA SOLUTION ANALYTIQUE ET LA SOLUTION NUMERIQUE JUSTE LES COORDONNES DES POINTS D IMPACT
         print("analytical solution at t = %f" % self.t[-1])
         x_ref, z_ref = self.set_reference_solution(self.t[-1])
         print("x, z                       : %f  %f" % (x_ref, z_ref))
@@ -108,8 +111,10 @@ class Model_2(object):
             print(" La validation est vrai")
         else:
             print(" Pas de validation")
-
+        #_______________________________________________________________________________________________________________________________________ AFFICHE L ERREUR
         print("l erreur max est ", np.max(ecart))
+
+        #_______________________________________________________________________________________________________________________________________ TRACE LA COURBE ANALYTIQUE SUPPERSPOSE AVEC LA COURBE  NUMERIQUE 
         plt.plot(self.x, self.z, marker="+", color="red",linewidth=3)
         plt.plot(x, z, marker="+", color="green",linewidth=3)
         plt.xlabel("Position X")
