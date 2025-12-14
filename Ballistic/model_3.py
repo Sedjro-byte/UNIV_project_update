@@ -36,7 +36,7 @@ class Model_3(object):
         self.beta = (self.rho * self.area) / (2 * self.mass)
         self.Ct = self.T0 / self.mass
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________ TO UPDATE THE MODEL PARAMETERS
 
     def update_param(self, param1):
         self.h = param1["h"]
@@ -60,7 +60,7 @@ class Model_3(object):
     def initial_message():
         cm.set_title("Création d'une instance du modèle ODE (exemple d'apprentissage)")
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________ FUNCTION ODE
 
     def ode(self, y, t):
         dy = np.zeros(4)
@@ -77,7 +77,7 @@ class Model_3(object):
 
         return dy
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________ TO GET THE (X  , Z  , V_X ,  V_Z )     FOR THE MODEL WE ARE WORKING ONE
 
     def solve_trajectory(self, alpha, t_end):
         self.t = np.linspace(0, t_end, self.npt)
@@ -91,7 +91,7 @@ class Model_3(object):
 
         self.x, self.z, self.v_x, self.v_z = y[:, 0], y[:, 1], y[:, 2], y[:, 3]
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________ TO PLOT ONE TRAJECTORY OF THE NUMERICAL ( X, Y ) COORDINATE
 
     def plot_trajectory(self):
         plt.plot(self.x, self.z, marker="+", color="red", linewidth=3)
@@ -101,8 +101,7 @@ class Model_3(object):
         plt.grid()
         plt.show()
 
-    #____________________________________________________________________________________________
-
+    #____________________________________________________________________________________________  TO PLOT DIFFERENT TRAJECTORIES DEPENDING ONE THE ( CD ,  CL)
     def plot_trajectories(self, param1, param2, param3, listC, t_end):
         # listC = [Cl4, Cd4, Cl5, Cd5, Cl7, Cd7]
 
@@ -138,7 +137,7 @@ class Model_3(object):
         plt.grid()
         plt.show()
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________      TO VALIDATE THE MODEL NUMERICAL COMPRE TO ANALYTICAL SOLUTION 
 
     def validation(self, t_end, npt):
         cm.set_msg("Validation")
@@ -172,14 +171,14 @@ class Model_3(object):
         plt.grid()
         plt.show()
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________      TO GET  (X, Z ) ANALYTICAL COORDINATE
 
     def set_reference_solution(self, t):
         x = self.v_0 * np.cos(self.alpha) * t
         z = - g / 2 * t ** 2 + self.v_0 * np.sin(self.alpha) * t + self.h
         return x, z
 
-    #____________________________________________________________________________________________
+    #____________________________________________________________________________________________       FIND THE IMPACT VALUES 
 
     def set_impact_values(self):
         def interpo(a, n, u):
@@ -241,6 +240,7 @@ class Model_3(object):
         print("length     : %.2f m" % self.impact_values["p"])
         print("angle      : %.2f °" % self.impact_values["angle"])
         print("|v|        : %.2f m/s" % self.impact_values["v"][2])
+  #____________________________________________________________________________________________      DRAW THE CONTOURS PLOT DEPENDING ONE THE ( ALPHA , CdC) CHANGING
 
 # Cdc et alphaC pour dire Cd pour la focntion de contour et alpha pouhr la fonction de contour
     def plot_contour (self , alphaC, CdC, param_base, t_end):
@@ -257,7 +257,6 @@ class Model_3(object):
                 self.solve_trajectory(alphai, t_end)     # resoudre pour avoir les valeurs de position en x, z les vitesse et autre 
                 impact= self.set_impact_values()         # recuperer les valeurs d'impact
                 R[i,j]=impact["p"]                        #  Sauvegarder les valeurs de l impact en fonction de l angle alpha et puis de Cdj
-
 
         CD, A = np.meshgrid(CdC, alphaC)
         fig, ax = plt.subplots()
